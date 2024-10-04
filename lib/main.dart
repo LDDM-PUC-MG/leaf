@@ -1,11 +1,11 @@
-import 'package:calendario/Telas/quemsomos.dart';
+import 'package:calendario/screens/quemsomos.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
-import 'Telas/LoginCadastro/login.dart';
-import 'Telas/calendario.dart';
-import 'Estilo/colors.dart';
-import 'Telas/LoginCadastro/cadastro.dart';
+import 'screens/LoginCadastro/login.dart';
+import 'screens/calendario.dart';
+import 'styles/colors.dart';
+import 'screens/LoginCadastro/cadastro.dart';
 
 
 void main() => runApp(const MaterialApp(home: BottomNavBar()));
@@ -14,12 +14,12 @@ class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  BottomNavBarState createState() => BottomNavBarState();
 }
 
 
 
-class _BottomNavBarState extends State<BottomNavBar> {
+class BottomNavBarState extends State<BottomNavBar> {
   int _page = 0;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 

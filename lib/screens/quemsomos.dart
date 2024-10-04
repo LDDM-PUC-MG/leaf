@@ -8,6 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class Quemsomos extends StatelessWidget {
+  const Quemsomos({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +124,7 @@ class Quemsomos extends StatelessWidget {
 
   // Função para construir cada card
   Widget _buildCard(String imagePath, String name, String link1, String link2) {
-    return Container(
+    return SizedBox(
       width: 150,
       child: Column(
         children: [

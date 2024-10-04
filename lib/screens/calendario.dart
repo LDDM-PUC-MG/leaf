@@ -2,7 +2,7 @@ import 'package:calendar_slider/calendar_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // Import para pegar imagens
 import 'dart:io'; // Para manipular arquivos de imagem
-import 'package:calendario/Estilo/colors.dart';
+import 'package:calendario/styles/colors.dart';
 
 class Calendario extends StatefulWidget {
   const Calendario({super.key});
@@ -81,7 +81,7 @@ class _ExamplePageState extends State<Calendario> {
         return AlertDialog(
           title: const Text("Mensagem"),
           content: const Text(
-              "Não tem memoria nesse dia!! Ou já se esqueceu, ou nem aconteceu"),
+              "Não tem memoria nesse dia!! Ou já se esqueceu, ou nem aconteceu!!"),
           actions: [
             TextButton(
               child: const Text("Ok"),
