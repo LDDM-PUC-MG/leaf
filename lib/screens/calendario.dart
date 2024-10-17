@@ -144,7 +144,7 @@ class _ExamplePageState extends State<Calendario> {
         selectedTileBackgroundColor: Colors.white,
         monthYearButtonBackgroundColor: Colors.white,
         monthYearTextColor: Colors.black,
-        tileBackgroundColor: AppColors.primary,
+        tileBackgroundColor: AppColors.secondary,
         selectedDateColor: Colors.black,
         dateColor: Colors.white,
         tileShadow: BoxShadow(
