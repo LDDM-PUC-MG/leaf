@@ -56,11 +56,11 @@ class Quemsomos extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.all(8.0),
                   child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      fit: BoxFit.cover,
-                      width: 75,
-                      height: 75,
+                    child:
+                    SizedBox(
+                      width: 100, // Largura desejada
+                      height: 100, // Altura desejada
+                      child: Image.asset('assets/images/logo.jpg'),
                     ),
                   ),
                 ),

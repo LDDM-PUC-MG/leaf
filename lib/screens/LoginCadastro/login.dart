@@ -1,6 +1,6 @@
 import '../../styles/colors.dart';
 import 'package:flutter/material.dart';
-
+import 'package:calendario/screens/LoginCadastro/cadastro.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,10 +29,10 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
 
-              Image.asset(
-                'assets/images/logo.png', // Caminho da imagem
-                width: 80, // Defina a largura da imagem
-                height: 80, // Defina a altura da imagem
+              SizedBox(
+                width: 200, // Largura desejada
+                height: 200, // Altura desejada
+                child: Image.asset('assets/images/logo.jpg'),
               ),
 
               // Título de boas-vindas
@@ -97,7 +97,7 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: const Text(
                     "Esqueceu a senha?",
-                    style: TextStyle(color: AppColors.secondary),
+                    style: TextStyle(color: Colors.blue),
                   ),
                 ),
               ),
@@ -151,13 +151,16 @@ class LoginScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Ação de criar conta
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CadastroPage()),
+                      );
                     },
                     child: Text(
                       "Crie agora",
                       style: TextStyle(
                         fontSize:14,
-                        color: AppColors.primary,
+                        color: Colors.blue,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(

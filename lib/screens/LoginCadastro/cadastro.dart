@@ -1,5 +1,6 @@
 import '../../styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:calendario/screens/LoginCadastro/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,10 +23,7 @@ class CadastroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -34,10 +32,10 @@ class CadastroPage extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Image.asset(
-                    'assets/images/logo.png', // Caminho da imagem
-                    width: 80, // Defina a largura da imagem
-                    height: 80, // Defina a altura da imagem
+                  SizedBox(
+                    width: 200, // Largura desejada
+                    height: 200, // Altura desejada
+                    child: Image.asset('assets/images/logo.jpg'),
                   ),
                   SizedBox(height: 16), // Espaçamento entre imagem e texto
                   Text(
@@ -100,7 +98,7 @@ class CadastroPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  iconColor: AppColors.primary,
+                  backgroundColor: AppColors.primary,
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -120,10 +118,15 @@ class CadastroPage extends StatelessWidget {
             SizedBox(height: 16),
             Center(
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
                 child: Text(
                   'Já possui conta? Faça login',
-                  style: TextStyle(color: Colors.blue[900]),
+                  style: TextStyle(color: Colors.blue),
                 ),
               ),
             ),
