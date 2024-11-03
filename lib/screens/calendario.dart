@@ -1,8 +1,10 @@
 import 'package:calendar_slider/calendar_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart'; // Import para pegar imagens
 import 'dart:io'; // Para manipular arquivos de imagem
 import 'package:calendario/styles/colors.dart';
+import 'package:calendario/screens/maps.dart';
 
 class Calendario extends StatefulWidget {
   const Calendario({super.key});
@@ -27,15 +29,39 @@ class _ExamplePageState extends State<Calendario> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Memória do Dia"),
+          title: Center(child: const Text("Memória do Dia")),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: noteController,
-                decoration: const InputDecoration(
-                  hintText: "Digite aqui",
-                ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.place), // Ícone do mapa
+                    onPressed: () async {
+                      final LatLng? location = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapaSelecionarLocalizacao()),
+                      );
+
+                      if (location != null) {
+                        // Aqui você pode usar a localização selecionada
+                        print('Localização selecionada: ${location.latitude}, ${location.longitude}');
+                        // Atualiza o controlador de texto com a localização
+                        noteController.text = 'Localização: ${location.latitude}, ${location.longitude}';
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 8), // Espaçamento entre o ícone e o TextField
+                  Expanded( // Para permitir que o TextField ocupe o restante do espaço
+                    child: TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(
+                        hintText: "Digite aqui",
+                        border: OutlineInputBorder(), // Adiciona uma borda ao TextField
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               _buildImageGallery(), // Exibe as imagens selecionadas
@@ -47,24 +73,28 @@ class _ExamplePageState extends State<Calendario> {
             ],
           ),
           actions: [
-            TextButton(
-              child: const Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo sem salvar
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Salvar"),
-              onPressed: () {
-                // Salva a anotação e as imagens na data selecionada
-                setState(() {
-                  _memoria[dataSelecionada] = {
-                    'text': noteController.text,
-                    'images': imgSelecionadas
-                  };
-                });
-                Navigator.of(context).pop(); // Fecha o diálogo após salvar
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  child: const Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Fecha o diálogo sem salvar
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text("Salvar"),
+                  onPressed: () {
+                    // Salva a anotação e as imagens na data selecionada
+                    setState(() {
+                      _memoria[dataSelecionada] = {
+                        'text': noteController.text,
+                        'images': imgSelecionadas
+                      };
+                    });
+                  },
+                ),
+              ],
             ),
           ],
         );

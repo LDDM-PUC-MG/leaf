@@ -17,48 +17,24 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class BottomNavBarState extends State<BottomNavBar> {
-  int _page = 0;
+  int _page = 1;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   // Simulação do estado de login
   bool isLoggedIn = false; // Alterar conforme o estado do login do usuário
 
   final List<Widget> _pages = [
-    const Calendario(),
-    Quemsomos(),
-    const LoginScreen(),
-    CadastroPage(),
-    perfilUsuario(),
+    LoginScreen(), // Indice 0
+    Quemsomos(), // Indice 1
+    Calendario(), // Indice 2
+    CadastroPage(), // Indice 3
+    perfilUsuario(), // Indice 4
   ];
 
   void _onTap(int index) {
     setState(() {
       _page = index;
-      // Mostra um SnackBar com a página atual
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Você está na página: ${_getPageName(index)}'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
     });
-  }
-
-  String _getPageName(int index) {
-    switch (index) {
-      case 0:
-        return "Calendário";
-      case 1:
-        return "Quem Somos";
-      case 2:
-        return "Login";
-      case 3:
-        return "Cadastro";
-      case 4:
-        return "perfilUsuario";
-      default:
-        return "Início";
-    }
   }
 
   @override
@@ -68,11 +44,11 @@ class BottomNavBarState extends State<BottomNavBar> {
         key: _bottomNavigationKey,
         index: _page,
         items: const <Widget>[
-          Icon(Icons.list, size: 30, color: AppColors.background),
-          Icon(Icons.home, size: 30, color: AppColors.background),
-          Icon(Icons.add, size: 30, color: AppColors.background),
-          Icon(Icons.call_split, size: 30, color: AppColors.background),
-          Icon(Icons.account_box, size: 30, color: AppColors.background),
+          Icon(Icons.list, size: 30, color: AppColors.background), // Lista de Memórias
+          Icon(Icons.home, size: 30, color: AppColors.background), // Quem somos
+          Icon(Icons.add, size: 30, color: AppColors.background), // Adicionar recordações
+          Icon(Icons.calendar_month, size: 30, color: AppColors.background), // Calendário
+          Icon(Icons.account_box, size: 30, color: AppColors.background), // Perfil de Usuário
         ],
         color: AppColors.primary,
         buttonBackgroundColor: AppColors.primary,
