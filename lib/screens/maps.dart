@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapaSelecionarLocalizacao extends StatefulWidget {
+  const MapaSelecionarLocalizacao({super.key});
+
+
+
   @override
   _MapaSelecionarLocalizacaoState createState() => _MapaSelecionarLocalizacaoState();
 }

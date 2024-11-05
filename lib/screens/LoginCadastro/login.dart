@@ -22,159 +22,169 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-
-              SizedBox(
-                width: 200, // Largura desejada
-                height: 200, // Altura desejada
-                child: Image.asset('assets/images/logo.jpg'),
-              ),
-
-              // Título de boas-vindas
-              Text(
-                "Seja bem vindo!",
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.3), // Cor da sombra
-                      offset: Offset(2.0, 2.0), // Deslocamento da sombra
-                      blurRadius: 4.0, // Desfoque da sombra
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: 200, // Largura da imagem
+                  height: 200, // Altura da imagem
+                  child: Image.asset('assets/images/logo.jpg'),
                 ),
-              ),
 
-              // Subtítulo
-              Text(
-                "Efetue seu login:",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.3), // Cor da sombra
-                      offset: Offset(2.0, 2.0), // Deslocamento da sombra
-                      blurRadius: 4.0, // Desfoque da sombra
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
+                const SizedBox(height: 16),
 
-              // Campo de e-mail/usuário
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: "E-mail ou usuário",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Campo de senha
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Senha",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              // Esqueceu a senha
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () {
-                    // Ação de esquecer senha
-                  },
-                  child: const Text(
-                    "Esqueceu a senha?",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ),
-
-              // Botão de login
-              ElevatedButton(
-                onPressed: () {
-                  // Ação de login
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: const Size(double.infinity, 50), // Largura total
-                  elevation: 10, // Altura da sombra
-                ),
-                child: Text(
-                "Acessar",
-                style: TextStyle(
-                  fontSize: 16, // Defina o tamanho da fonte aqui
-                  fontWeight: FontWeight.bold, // Opcional: define o peso da fonte (negrito)
-                  color: AppColors.background,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.3), // Cor da sombra
-                      offset: Offset(2.0, 2.0), // Deslocamento da sombra
-                      blurRadius: 4.0, // Desfoque da sombra
-                    ),
-                  ],
-                ),
-              ),
-              ),
-
-              // Espaço entre os elementos
-              const SizedBox(height: 20),
-
-              // Link para criar uma conta
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                   Text(
-                    "Não possui conta? ",
-                      style: TextStyle(
-                        fontSize:14,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.3), // Cor da sombra
-                            offset: Offset(2.0, 2.0), // Deslocamento da sombra
-                            blurRadius: 4.0, // Desfoque da sombra
-                          ),
-                        ],
+                // Título de boas-vindas
+                Text(
+                  "Seja bem vindo!",
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 4.0,
                       ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CadastroPage()),
-                      );
+                  textAlign: TextAlign.center, // Centraliza o texto
+                ),
+
+                const SizedBox(height: 8),
+
+                // Subtítulo
+                Text(
+                  "Efetue seu login:",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 4.0,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 30),
+
+                // Campo de e-mail/usuário
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: "E-mail de usuário",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Campo de senha
+                const TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Senha",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                // Esqueceu a senha
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () {
+                      // Ação de esquecer senha
                     },
-                    child: Text(
-                      "Crie agora",
+                    child: const Text(
+                      "Esqueceu a senha?",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Botão de login
+                ElevatedButton(
+                  onPressed: () {
+                    // Ação de login
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    minimumSize: const Size(double.infinity, 50),
+                    elevation: 10,
+                  ),
+                  child: Text(
+                    "Acessar",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.3),
+                          offset: Offset(2.0, 2.0),
+                          blurRadius: 4.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Link para criar uma conta
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Não possui conta? ",
                       style: TextStyle(
-                        fontSize:14,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withOpacity(0.3), // Cor da sombra
-                            offset: Offset(2.0, 2.0), // Deslocamento da sombra
-                            blurRadius: 4.0, // Desfoque da sombra
+                            color: Colors.black.withOpacity(0.3),
+                            offset: Offset(2.0, 2.0),
+                            blurRadius: 4.0,
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CadastroPage()),
+                        );
+                      },
+                      child: Text(
+                        "Crie agora",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 4.0,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

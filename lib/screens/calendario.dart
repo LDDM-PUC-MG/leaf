@@ -44,20 +44,17 @@ class _ExamplePageState extends State<Calendario> {
                       );
 
                       if (location != null) {
-                        // Aqui você pode usar a localização selecionada
-                        print('Localização selecionada: ${location.latitude}, ${location.longitude}');
-                        // Atualiza o controlador de texto com a localização
                         noteController.text = 'Localização: ${location.latitude}, ${location.longitude}';
                       }
                     },
                   ),
-                  const SizedBox(width: 8), // Espaçamento entre o ícone e o TextField
-                  Expanded( // Para permitir que o TextField ocupe o restante do espaço
+                  const SizedBox(width: 8),
+                  Expanded(
                     child: TextField(
                       controller: noteController,
                       decoration: const InputDecoration(
                         hintText: "Digite aqui",
-                        border: OutlineInputBorder(), // Adiciona uma borda ao TextField
+                        border: OutlineInputBorder(),
                       ),
                     ),
                   ),
@@ -85,13 +82,13 @@ class _ExamplePageState extends State<Calendario> {
                 ElevatedButton(
                   child: const Text("Salvar"),
                   onPressed: () {
-                    // Salva a anotação e as imagens na data selecionada
                     setState(() {
                       _memoria[dataSelecionada] = {
                         'text': noteController.text,
                         'images': imgSelecionadas
                       };
                     });
+                    Navigator.of(context).pop(); // Fecha o diálogo ao salvar
                   },
                 ),
               ],
@@ -123,7 +120,6 @@ class _ExamplePageState extends State<Calendario> {
     );
   }
 
-  // Função para escolher múltiplas imagens
   Future<void> _escolherImgs() async {
     final ImagePicker picker = ImagePicker();
     final List<XFile> pickedFiles = await picker.pickMultiImage();
@@ -133,24 +129,48 @@ class _ExamplePageState extends State<Calendario> {
     });
   }
 
-  // Widget para exibir as imagens selecionadas
   Widget _buildImageGallery() {
     return Wrap(
-      spacing: 10,
+      alignment: WrapAlignment.center, // Centraliza as imagens
+      spacing: 20,
       runSpacing: 10,
       children: imgSelecionadas.map((image) {
-        return SizedBox(
-          width: 80,
-          height: 80,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0), // Bordas arredondadas (opcional)
-            child: Image.file(
-              image,
-              fit: BoxFit.cover, // Faz com que a imagem se ajuste ao container sem vazar
+        return GestureDetector(
+          onTap: () {
+            _openFullScreenImage(image);
+          },
+          child: SizedBox(
+            width: 100,
+            height: 100,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.file(
+                image,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         );
       }).toList(),
+    );
+  }
+
+  void _openFullScreenImage(File image) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop(); // Fecha a tela cheia ao clicar
+            },
+            child: Image.file(
+              image,
+              fit: BoxFit.contain,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -197,7 +217,7 @@ class _ExamplePageState extends State<Calendario> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0), // Margem superior de 16 pixels
+                    padding: const EdgeInsets.only(top: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -242,20 +262,18 @@ class _ExamplePageState extends State<Calendario> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // Exibe a anotação e as imagens
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     padding: const EdgeInsets.all(16.0),
                     alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundSecondary, // Cor de fundo do contêiner
-                      borderRadius: BorderRadius.circular(12.0), // Bordas arredondadas
+                      color: AppColors.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Cor da sombra
-                          blurRadius: 2.0, // Desfoque da sombra
-                          offset: const Offset(0, 2), // Posição da sombra
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 2.0,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),

@@ -1,5 +1,5 @@
 // ignore_for_file: deprecated_member_use
-
+import 'package:calendario/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // Para abrir links
 
@@ -41,30 +41,33 @@ class Quemsomos extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10.0,
-                        spreadRadius: 2.0,
+                 Center(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Image.asset('assets/images/logo.jpg'),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Faça seu cadastro!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 4.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipOval(
-                    child:
-                    SizedBox(
-                      width: 100, // Largura desejada
-                      height: 100, // Altura desejada
-                      child: Image.asset('assets/images/logo.jpg'),
-                    ),
-                  ),
                 ),
-              ),
               const SizedBox(height: 20),
 
               const Text(

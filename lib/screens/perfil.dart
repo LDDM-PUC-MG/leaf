@@ -8,6 +8,10 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -150,7 +154,7 @@ class InfoCard extends StatelessWidget {
   final String label;
   final String value;
 
-  InfoCard({required this.label, required this.value});
+  const InfoCard({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +175,7 @@ class ProfileOption extends StatelessWidget {
   final String? value;
   final bool isLogout;
 
-  ProfileOption({required this.icon, required this.label, this.value, this.isLogout = false});
+  const ProfileOption({super.key, required this.icon, required this.label, this.value, this.isLogout = false});
 
   @override
   Widget build(BuildContext context) {
