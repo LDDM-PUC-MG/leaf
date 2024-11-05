@@ -1,9 +1,9 @@
+import 'package:calendario/screens/calendario/calendario.dart';
+import 'package:calendario/screens/listaRecentes.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'screens/calendario.dart';
+import 'screens/memorias.dart';
 import 'screens/perfil.dart';
-import 'screens/LoginCadastro/login.dart';
-import 'screens/LoginCadastro/cadastro.dart';
 import 'package:calendario/screens/quemsomos.dart';
 import 'styles/colors.dart';
 
@@ -24,10 +24,10 @@ class BottomNavBarState extends State<BottomNavBar> {
   bool isLoggedIn = false; // Alterar conforme o estado do login do usuário
 
   final List<Widget> _pages = [
-    LoginScreen(), // Indice 0
+    ListaRecentes(), // Indice 0
     Quemsomos(), // Indice 1
-    Calendario(), // Indice 2
-    CadastroPage(), // Indice 3
+    Memorias(), // Indice 2
+    Calendario(), // Indice 3
     perfilUsuario(), // Indice 4
   ];
 
@@ -44,11 +44,11 @@ class BottomNavBarState extends State<BottomNavBar> {
         key: _bottomNavigationKey,
         index: _page,
         items: const <Widget>[
-          Icon(Icons.list, size: 30, color: AppColors.background), // Lista de Memórias
-          Icon(Icons.home, size: 30, color: AppColors.background), // Quem somos
-          Icon(Icons.add, size: 30, color: AppColors.background), // Adicionar recordações
-          Icon(Icons.calendar_month, size: 30, color: AppColors.background), // Calendário
-          Icon(Icons.account_box, size: 30, color: AppColors.background), // Perfil de Usuário
+          Icon(Icons.list, size: 30, color: AppColors.terciary), // Lista de Memórias
+          Icon(Icons.home, size: 30, color: AppColors.terciary), // Quem somos
+          Icon(Icons.add, size: 30, color: AppColors.terciary), // Adicionar recordações
+          Icon(Icons.calendar_month, size: 30, color: AppColors.terciary), // Calendário
+          Icon(Icons.account_box, size: 30, color: AppColors.terciary), // Perfil de Usuário
         ],
         color: AppColors.primary,
         buttonBackgroundColor: AppColors.primary,

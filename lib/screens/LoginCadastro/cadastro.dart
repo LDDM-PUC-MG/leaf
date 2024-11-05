@@ -111,7 +111,7 @@ class CadastroPage extends StatelessWidget {
                       'Acessar',
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.background,
+                        color: AppColors.terciary,
                       ),
                     ),
                   ),

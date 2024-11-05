@@ -6,14 +6,14 @@ import 'dart:io'; // Para manipular arquivos de imagem
 import 'package:calendario/styles/colors.dart';
 import 'package:calendario/screens/maps.dart';
 
-class Calendario extends StatefulWidget {
-  const Calendario({super.key});
+class Memorias extends StatefulWidget {
+  const Memorias({super.key});
 
   @override
-  State<Calendario> createState() => _ExamplePageState();
+  State<Memorias> createState() => _ExamplePageState();
 }
 
-class _ExamplePageState extends State<Calendario> {
+class _ExamplePageState extends State<Memorias> {
   final CalendarSliderController _firstController = CalendarSliderController();
   late DateTime dataSelecionada;
   final Map<DateTime, Map<String, dynamic>> _memoria = {}; // Mapa para armazenar anotações e imagens
@@ -232,7 +232,7 @@ class _ExamplePageState extends State<Calendario> {
                           child: const Text(
                             "Voltar para hoje",
                             style: TextStyle(
-                              color: AppColors.background,
+                              color: AppColors.terciary,
                             ),
                           ),
                         ),
