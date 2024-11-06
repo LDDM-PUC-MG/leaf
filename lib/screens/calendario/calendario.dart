@@ -26,7 +26,5 @@ class Calendario extends StatelessWidget {
       ),
       home: TableEventsExample(), // Definimos diretamente a tela de calendário de eventos
     );
-
   }
-
 }

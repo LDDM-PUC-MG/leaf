@@ -80,7 +80,7 @@ class SQLHelper {
     );
   }
 
-  Future<void> updateUsername(int id, String newUsername) async {
+  static Future<void> updateUsername(int id, String newUsername) async {
     final db = await SQLHelper.db();
     await db.update(
       'usuarios',
@@ -100,7 +100,7 @@ class SQLHelper {
     );
   }
 
-  Future<void> updateBirthday(int id, String newBirthday) async {
+  static Future<void> updateBirthday(int id, String newBirthday) async {
     final db = await SQLHelper.db();
     await db.update(
       'usuarios',
@@ -110,7 +110,7 @@ class SQLHelper {
     );
   }
 
-  Future<void> updateEmail(int id, String newEmail) async {
+  static Future<void> updateEmail(int id, String newEmail) async {
     final db = await SQLHelper.db();
     await db.update(
       'usuarios',

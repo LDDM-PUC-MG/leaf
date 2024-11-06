@@ -1,15 +1,20 @@
+import 'dart:io'; // Para usar File
 import 'package:flutter/material.dart';
 import 'package:calendario/styles/colors.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:calendario/screens/Perfil/edit_username_screen.dart';
+import 'package:calendario/screens/Perfil/edit_email_screen.dart';
+import 'package:calendario/screens/Perfil/edit_birthday_screen.dart';
+import 'package:image_picker/image_picker.dart'; // Para usar ImagePicker e ImageSource
 import 'package:provider/provider.dart';
 import 'package:calendario/database/user_provider.dart';
 import 'package:calendario/screens/LoginCadastro/login.dart';
 
+// Defina as classes InfoCard e ProfileOption dentro do arquivo ou as importe de outros arquivos
+
 class PerfilUsuario extends StatefulWidget {
   const PerfilUsuario({super.key});
+
   @override
-  // ignore: library_private_types_in_public_api
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
@@ -36,7 +41,7 @@ class _ProfileScreenState extends State<PerfilUsuario> {
       appBar: AppBar(
         title: Text(
           'Perfil',
-          style: TextStyle(color: AppColors.terciary), // Definindo a cor do texto
+          style: TextStyle(color: AppColors.terciary, fontSize:24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
@@ -52,8 +57,7 @@ class _ProfileScreenState extends State<PerfilUsuario> {
                   radius: 70,
                   backgroundImage: _profileImage != null
                       ? FileImage(_profileImage!)
-                      : NetworkImage('https://via.placeholder.com/100')
-                          as ImageProvider,
+                      : NetworkImage('https://via.placeholder.com/100') as ImageProvider,
                   child: _profileImage == null
                       ? Icon(Icons.camera_alt, color: Colors.grey[700], size: 50)
                       : null,
@@ -80,9 +84,39 @@ class _ProfileScreenState extends State<PerfilUsuario> {
               Expanded(
                 child: ListView(
                   children: [
-                    ProfileOption(icon: Icons.person, label: 'Nome de Usuário', value: user.username),
-                    ProfileOption(icon: Icons.email, label: 'E-mail', value: user.email),
-                    ProfileOption(icon: Icons.cake, label: 'Data de Nascimento', value: user.birthday),
+                    ProfileOption(
+                      icon: Icons.person,
+                      label: 'Nome de Usuário',
+                      value: user.username,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EditUsernameScreen()),
+                        );
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.email,
+                      label: 'E-mail',
+                      value: user.email,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EditEmailScreen()),
+                        );
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.cake,
+                      label: 'Data de Nascimento',
+                      value: user.birthday,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EditBirthdayScreen()),
+                        );
+                      },
+                    ),
                     Divider(),
                     ProfileOption(icon: Icons.info, label: 'Informações pessoais'),
                     ProfileOption(icon: Icons.favorite, label: 'Seus favoritos'),
@@ -99,7 +133,6 @@ class _ProfileScreenState extends State<PerfilUsuario> {
   }
 }
 
-// Definição do widget InfoCard
 class InfoCard extends StatelessWidget {
   final String label;
   final String value;
@@ -118,12 +151,12 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-// Definição do widget ProfileOption com lógica de logout
 class ProfileOption extends StatelessWidget {
   final IconData icon;
   final String label;
   final String? value;
   final bool isLogout;
+  final VoidCallback? onPressed;
 
   const ProfileOption({
     super.key,
@@ -131,6 +164,7 @@ class ProfileOption extends StatelessWidget {
     required this.label,
     this.value,
     this.isLogout = false,
+    this.onPressed,
   });
 
   @override
@@ -140,21 +174,20 @@ class ProfileOption extends StatelessWidget {
       title: Text(label),
       subtitle: value != null ? Text(value!) : null,
       trailing: isLogout ? null : Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {
+      onTap: onPressed ?? () {
         if (isLogout) {
           _logout(context);
         } else {
-          // Lógica para navegação ou ação do item
+          // Lógica padrão para ações
         }
       },
     );
   }
 
-  // Função para realizar o logout e redirecionar
   void _logout(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (route) => false,
+          (route) => false,
     );
   }
 }
