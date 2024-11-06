@@ -1,4 +1,5 @@
 import 'dart:io'; // Para usar File
+import 'package:calendario/screens/Perfil/edit_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:calendario/styles/colors.dart';
 import 'package:calendario/screens/Perfil/edit_username_screen.dart';
@@ -142,6 +143,17 @@ class _ProfileScreenState extends State<PerfilUsuario> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => EditEmailScreen()),
+                        );
+                      },
+                    ),
+                      ProfileOption(
+                      icon: Icons.password,
+                      label: 'Senha',
+                      value: '•' * (user.password.length), // Mostra a senha como pontinhos
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EditPasswordScreen()),
                         );
                       },
                     ),

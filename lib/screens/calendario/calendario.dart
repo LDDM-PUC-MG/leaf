@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'events_example.dart';  // Mantemos apenas a importação de events_example.dart
 import 'package:calendario/styles/colors.dart';
 

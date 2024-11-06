@@ -2,7 +2,6 @@ import 'package:calendario/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:calendario/database/user_provider.dart';
-import 'package:calendario/database/sql_helper.dart';
 
 class EditUsernameScreen extends StatefulWidget {
   const EditUsernameScreen({super.key});

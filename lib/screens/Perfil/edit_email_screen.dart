@@ -50,7 +50,19 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
     });
 
     try {
-      // Chamando o método updateEmail com o ID do usuário e o novo email
+      // Verifica se o e-mail já está em uso
+      final emailExists = await userProvider.emailExists(newEmail);
+      if (emailExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Esse email já está em uso')),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Atualiza o e-mail se ele estiver disponível
       await userProvider.updateEmail(userProvider.user!.id, newEmail);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -74,7 +86,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
       appBar: AppBar(
         title: Text(
           'Alterar Email',
-          style: TextStyle(color: AppColors.terciary, fontSize:24, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.terciary, fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
@@ -93,8 +105,8 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _saveEmail,
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary, // Cor de fundo do botão
-                  foregroundColor: AppColors.terciary
+                backgroundColor: AppColors.secondary, // Cor de fundo do botão
+                foregroundColor: AppColors.terciary,
               ),
               child: _isLoading
                   ? const CircularProgressIndicator()

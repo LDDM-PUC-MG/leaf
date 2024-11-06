@@ -2,6 +2,7 @@
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:calendario/database/user.dart';
 
+
 class SQLHelper {
   static Future<void> criaTabela(sql.Database database) async {
     await database.execute("""
@@ -55,7 +56,7 @@ class SQLHelper {
     }
   }
 
-  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+  static Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     final db = await SQLHelper.db();
     final result = await db.query(
       'usuarios',
@@ -90,7 +91,7 @@ class SQLHelper {
     );
   }
 
-  Future<void> updatePassword(int id, String newPassword) async {
+  static Future<void> updatePassword(int id, String newPassword) async {
     final db = await SQLHelper.db();
     await db.update(
       'usuarios',
@@ -119,4 +120,27 @@ class SQLHelper {
       whereArgs: [id],
     );
   }
+
+   static Future<String?> getPasswordById(int id) async {
+    final db = await SQLHelper.db();
+    
+    // Realiza uma query no banco de dados para obter a senha do usuário pelo ID
+    final result = await db.query(
+      'usuarios', // Nome da tabela
+      columns: ['password'], // Coluna que queremos retornar
+      where: 'id = ?', // Condição
+      whereArgs: [id], // Argumento para a condição
+    );
+
+    // Se o resultado estiver vazio, retorna null
+    if (result.isEmpty) {
+      return null;
+    }
+
+    // Retorna a senha como uma string
+    return result.first['password'] as String?;
+  }
+
+
+
 }

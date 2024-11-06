@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:calendario/screens/LoginCadastro/login.dart';
-import 'package:calendario/DataBase/sql_helper.dart'; // Certifique-se de que o caminho para o SQLHelper está correto
+import 'package:calendario/database/sql_helper.dart'; // Certifique-se de que o caminho para o SQLHelper está correto
 import '../../styles/colors.dart';
 
 void main() {
@@ -132,7 +132,8 @@ class CadastroPage extends StatelessWidget {
                       }
 
                       // Verifica se o email já existe
-                      final existingUser = await SQLHelper().getUserByEmail(emailController.text);
+                      final existingUser = await SQLHelper.getUserByEmail(emailController.text);
+
 
                       if (existingUser != null) {
                         // ignore: use_build_context_synchronously
