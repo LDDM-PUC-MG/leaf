@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<PerfilUsuario> {
       appBar: AppBar(
         title: Text(
           'Perfil',
-          style: TextStyle(color: AppColors.terciary),
+          style: TextStyle(color: AppColors.terciary), // Definindo a cor do texto
         ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
