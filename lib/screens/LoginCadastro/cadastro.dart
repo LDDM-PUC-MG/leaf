@@ -1,6 +1,7 @@
-import '../../styles/colors.dart'; 
 import 'package:flutter/material.dart';
 import 'package:calendario/screens/LoginCadastro/login.dart';
+import 'package:calendario/DataBase/sql_helper.dart'; // Certifique-se de que o caminho para o SQLHelper está correto
+import '../../styles/colors.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,6 +23,13 @@ class CadastroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Controladores para capturar o texto dos campos
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController confirmPasswordController = TextEditingController();
+    final TextEditingController birthdayController = TextEditingController();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -59,13 +67,15 @@ class CadastroPage extends StatelessWidget {
                 ),
                 SizedBox(height: 30),
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
-                    labelText: 'Digite seu melhor email',
+                    labelText: 'Digite seu email',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: usernameController,
                   decoration: InputDecoration(
                     labelText: 'Digite seu nome de usuário',
                     border: OutlineInputBorder(),
@@ -73,6 +83,7 @@ class CadastroPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Digite sua senha',
@@ -81,6 +92,7 @@ class CadastroPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: confirmPasswordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Confirme sua senha',
@@ -89,15 +101,68 @@ class CadastroPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: birthdayController,
                   decoration: InputDecoration(
-                    labelText: 'Data de nascimento',
+                    labelText: 'Digite sua data de aniversário',
                     border: OutlineInputBorder(),
                   ),
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      birthdayController.text = pickedDate.toLocal().toIso8601String().split('T').first;
+                    }
+                  },
                 ),
                 SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // Verifica se as senhas coincidem
+                      if (passwordController.text != confirmPasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('As senhas não coincidem')),
+                        );
+                        return;
+                      }
+
+                      // Verifica se o email já existe
+                      final existingUser = await SQLHelper().getUserByEmail(emailController.text);
+
+                      if (existingUser != null) {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Este e-mail já está cadastrado')),
+                        );
+                      } else {
+                        // Adiciona o usuário com data de aniversário
+                        final result = await SQLHelper.addUser(
+                          emailController.text,
+                          usernameController.text,
+                          passwordController.text,
+                          birthdayController.text, // Passa a data de aniversário
+                        );
+
+                        if (result > 0) {
+                          // Sucesso no cadastro, redireciona para a página de login
+                          Navigator.push(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                          );
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro ao cadastrar usuário')),
+                          );
+                        }
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16),
@@ -108,10 +173,10 @@ class CadastroPage extends StatelessWidget {
                       shadowColor: Colors.black.withOpacity(1),
                     ),
                     child: Text(
-                      'Acessar',
+                      'Cadastrar',
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.background,
+                        color: AppColors.terciary,
                       ),
                     ),
                   ),

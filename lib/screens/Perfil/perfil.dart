@@ -2,43 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:calendario/styles/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:provider/provider.dart';
+import 'package:calendario/database/user_provider.dart';
+import 'package:calendario/screens/LoginCadastro/login.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  
-
+class PerfilUsuario extends StatefulWidget {
+  const PerfilUsuario({super.key});
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profile Screen',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      home: perfilUsuario(),
-    );
-  }
-}
-
-class perfilUsuario extends StatefulWidget {
-  const perfilUsuario({super.key});
-  @override
+  // ignore: library_private_types_in_public_api
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<perfilUsuario> {
-  int _currentIndex = 0;
+class _ProfileScreenState extends State<PerfilUsuario> {
   File? _profileImage;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -53,11 +29,14 @@ class _ProfileScreenState extends State<perfilUsuario> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Perfil',
-          style: TextStyle(color: AppColors.background), // Definindo a cor do texto
+          style: TextStyle(color: AppColors.terciary),
         ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
@@ -68,12 +47,13 @@ class _ProfileScreenState extends State<perfilUsuario> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: _pickImage, // Abre a galeria ao tocar na imagem
+                onTap: _pickImage,
                 child: CircleAvatar(
                   radius: 70,
                   backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!) // Exibe a imagem selecionada
-                      : NetworkImage('https://via.placeholder.com/100') as ImageProvider,
+                      ? FileImage(_profileImage!)
+                      : NetworkImage('https://via.placeholder.com/100')
+                          as ImageProvider,
                   child: _profileImage == null
                       ? Icon(Icons.camera_alt, color: Colors.grey[700], size: 50)
                       : null,
@@ -81,7 +61,7 @@ class _ProfileScreenState extends State<perfilUsuario> {
               ),
               SizedBox(height: 16),
               Text(
-                'LEAFteam',
+                user!.username,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Text(
@@ -92,47 +72,17 @@ class _ProfileScreenState extends State<perfilUsuario> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: InfoCard(label: 'Memórias Registradas', value: '00'),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: InfoCard(label: 'Sequência de memórias', value: '00'),
-                  ),
+                  InfoCard(label: 'Memórias Registradas', value: '00'),
+                  InfoCard(label: 'Sequência de memórias', value: '00'),
                 ],
               ),
               SizedBox(height: 24),
               Expanded(
                 child: ListView(
                   children: [
-                    ProfileOption(icon: Icons.person, label: 'Nome de Usuário', value: 'JohanSmith'),
-                    ProfileOption(icon: Icons.email, label: 'E-mail', value: 'johansmith@example.com'),
-                    ProfileOption(icon: Icons.cake, label: 'Data de Nascimento', value: '01/01/1990'),
+                    ProfileOption(icon: Icons.person, label: 'Nome de Usuário', value: user.username),
+                    ProfileOption(icon: Icons.email, label: 'E-mail', value: user.email),
+                    ProfileOption(icon: Icons.cake, label: 'Data de Nascimento', value: user.birthday),
                     Divider(),
                     ProfileOption(icon: Icons.info, label: 'Informações pessoais'),
                     ProfileOption(icon: Icons.favorite, label: 'Seus favoritos'),
@@ -168,14 +118,20 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-// Definição do widget ProfileOption
+// Definição do widget ProfileOption com lógica de logout
 class ProfileOption extends StatelessWidget {
   final IconData icon;
   final String label;
   final String? value;
   final bool isLogout;
 
-  const ProfileOption({super.key, required this.icon, required this.label, this.value, this.isLogout = false});
+  const ProfileOption({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.value,
+    this.isLogout = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -186,11 +142,19 @@ class ProfileOption extends StatelessWidget {
       trailing: isLogout ? null : Icon(Icons.arrow_forward_ios, size: 16),
       onTap: () {
         if (isLogout) {
-          // Lógica para logout
+          _logout(context);
         } else {
           // Lógica para navegação ou ação do item
         }
       },
+    );
+  }
+
+  // Função para realizar o logout e redirecionar
+  void _logout(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
     );
   }
 }

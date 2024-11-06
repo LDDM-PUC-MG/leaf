@@ -1,23 +1,51 @@
 import '../../styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:calendario/DataBase/sql_helper.dart';
+import 'package:calendario/main.dart';
+import '/database/user_provider.dart'; // Importe o UserProvider
 import 'package:calendario/screens/LoginCadastro/cadastro.dart';
 
-void main() {
-  runApp(MyApp());
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-// ignore: use_key_in_widget_constructors
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginScreen(),
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String? _errorMessage;
+
+Future<void> _login() async {
+  final email = _emailController.text;
+  final password = _passwordController.text;
+
+  // Busca o usuário no banco de dados usando SQLHelper
+  final user = await SQLHelper().getUser(email, password);
+
+  if (user != null) {
+    // Salva o usuário autenticado no UserProvider
+    // ignore: use_build_context_synchronously
+    Provider.of<UserProvider>(context, listen: false).setUser(user);
+
+    // Redireciona para a tela principal
+    Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BottomNavBar(),
+      ),
     );
+  } else {
+    // Exibe mensagem de erro
+    setState(() {
+      _errorMessage = "E-mail ou senha incorretos.";
+    });
   }
 }
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +58,11 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  width: 200, // Largura da imagem
-                  height: 200, // Altura da imagem
+                  width: 200,
+                  height: 200,
                   child: Image.asset('assets/images/logo.jpg'),
                 ),
-
                 const SizedBox(height: 16),
-
-                // Título de boas-vindas
                 Text(
                   "Seja bem vindo!",
                   style: TextStyle(
@@ -52,12 +77,9 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  textAlign: TextAlign.center, // Centraliza o texto
+                  textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 8),
-
-                // Subtítulo
                 Text(
                   "Efetue seu login:",
                   style: TextStyle(
@@ -74,49 +96,32 @@ class LoginScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 30),
-
-                // Campo de e-mail/usuário
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
                     labelText: "E-mail de usuário",
                     border: OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Campo de senha
-                const TextField(
+                TextField(
+                  controller: _passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Senha",
                     border: OutlineInputBorder(),
                   ),
                 ),
-
-                // Esqueceu a senha
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () {
-                      // Ação de esquecer senha
-                    },
-                    child: const Text(
-                      "Esqueceu a senha?",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ),
-
                 const SizedBox(height: 20),
-
-                // Botão de login
+                if (_errorMessage != null)
+                  Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Ação de login
-                  },
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     minimumSize: const Size(double.infinity, 50),
@@ -127,7 +132,7 @@ class LoginScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.background,
+                      color: AppColors.terciary,
                       shadows: [
                         Shadow(
                           color: Colors.black.withOpacity(0.3),
@@ -138,10 +143,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Link para criar uma conta
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -162,7 +164,8 @@ class LoginScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CadastroPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const CadastroPage()),
                         );
                       },
                       child: Text(
