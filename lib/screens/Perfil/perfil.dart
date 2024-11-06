@@ -73,11 +73,50 @@ class _ProfileScreenState extends State<PerfilUsuario> {
                 style: TextStyle(color: Colors.grey[700]),
               ),
               SizedBox(height: 24),
+              // Adicionando os quadrados verdes para "Memórias Registradas" e "Sequência de Memórias"
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InfoCard(label: 'Memórias Registradas', value: '00'),
-                  InfoCard(label: 'Sequência de memórias', value: '00'),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '00', // Pode ser substituído com a quantidade real
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Memórias Registradas',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '00', // Pode ser substituído com a quantidade real
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Sequência de memórias',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 24),
