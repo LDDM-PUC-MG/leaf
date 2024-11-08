@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart'; // Para usar ImagePicker e Imag
 import 'package:provider/provider.dart';
 import 'package:calendario/database/user_provider.dart';
 import 'package:calendario/screens/LoginCadastro/login.dart';
+import 'package:calendario/screens/Perfil/info_pessoal.dart';
 
 // Defina as classes InfoCard e ProfileOption dentro do arquivo ou as importe de outros arquivos
 
@@ -169,7 +170,13 @@ class _ProfileScreenState extends State<PerfilUsuario> {
                       },
                     ),
                     Divider(),
-                    ProfileOption(icon: Icons.info, label: 'Informações pessoais'),
+                    ProfileOption(icon: Icons.info, label: 'Informações pessoais',
+                    onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InfoPessoal()),
+                        );
+                      },),
                     ProfileOption(icon: Icons.favorite, label: 'Seus favoritos'),
                     ProfileOption(icon: Icons.payment, label: 'Pagamento'),
                     ProfileOption(icon: Icons.logout, label: 'Sair', isLogout: true),
