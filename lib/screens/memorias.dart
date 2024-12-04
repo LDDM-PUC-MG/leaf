@@ -123,7 +123,8 @@ class _ExamplePageState extends State<Memorias> {
               onPressed: () async {
                 // Atualiza a memória no SQLite
                 await SQLHelper.updateMemoria(
-                  user.id,
+                  _memoria[dataSelecionada]
+                      ?['id'], // Use o ID da memória armazenado
                   noteController.text,
                   dataSelecionada.toIso8601String().substring(0, 10),
                 );
@@ -148,7 +149,7 @@ class _ExamplePageState extends State<Memorias> {
         return AlertDialog(
           title: const Text("Mensagem"),
           content: const Text(
-              "Não tem memória nesse dia!! Ou já se esqueceu, ou nem aconteceu!!"),
+              "Não tem memória nesse dia!! Ou esqueceu-se, ou nem aconteceu!!"),
           actions: [
             TextButton(
               child: const Text("Ok"),
@@ -229,10 +230,14 @@ class _ExamplePageState extends State<Memorias> {
             .startsWith(dataSelecionada.toIso8601String().substring(0, 10)),
         orElse: () => {},
       );
-
-      setState(() {
-        _memoria[dataSelecionada] = {'text': memoriaDoDia['mensagem']};
-      });
+      if (mounted) {
+        setState(() {
+          _memoria[dataSelecionada] = {
+            'text': memoriaDoDia['mensagem'],
+            'id': memoriaDoDia['id'], // Armazene o ID da memória
+          };
+        });
+      }
     }
 
     // Carregar o UserProvider e inicializar o usuário após o frame ser construído

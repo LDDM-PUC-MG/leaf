@@ -164,15 +164,14 @@ class SQLHelper {
     return await db.insert('memoria', dataMap);
   }
 
-
   static Future<void> updateMemoria(
-    int id, String mensagem, String data) async {
+      int memoriaId, String mensagem, String data) async {
     final db = await SQLHelper.db();
     await db.update(
       'memoria',
       {'mensagem': mensagem, 'data': data},
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ?', // Certifique-se de usar o ID da memória
+      whereArgs: [memoriaId],
     );
   }
 
@@ -180,6 +179,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
     return await db.query(
       'memoria',
+      columns: ['id', 'mensagem', 'data'], // Inclua o 'id' da memória
       where: 'id_usuario = ?',
       whereArgs: [idUsuario],
     );
