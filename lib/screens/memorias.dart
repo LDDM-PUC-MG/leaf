@@ -95,6 +95,15 @@ class _ExamplePageState extends State<Memorias> {
   }
 
   void _editarMemoria(BuildContext context) {
+    final int? memoriaId = _memoria[dataSelecionada]?['id'];
+
+    if (memoriaId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Nenhuma memória encontrada para este dia.")),
+      );
+      return;
+    }
+
     TextEditingController noteController = TextEditingController(
       text: _memoria[dataSelecionada]?['text'] ?? '',
     );
@@ -123,12 +132,12 @@ class _ExamplePageState extends State<Memorias> {
               onPressed: () async {
                 // Atualiza a memória no SQLite
                 await SQLHelper.updateMemoria(
-                  _memoria[dataSelecionada]
-                      ?['id'], // Use o ID da memória armazenado
+                  memoriaId, // Use o ID da memória
                   noteController.text,
                   dataSelecionada.toIso8601String().substring(0, 10),
                 );
 
+                // Atualiza o estado local
                 setState(() {
                   _memoria[dataSelecionada] = {'text': noteController.text};
                 });
@@ -230,10 +239,11 @@ class _ExamplePageState extends State<Memorias> {
             .startsWith(dataSelecionada.toIso8601String().substring(0, 10)),
         orElse: () => {},
       );
+
       if (mounted) {
         setState(() {
           _memoria[dataSelecionada] = {
-            'text': memoriaDoDia['mensagem'],
+            'text': memoriaDoDia['mensagem'] ?? '',
             'id': memoriaDoDia['id'], // Armazene o ID da memória
           };
         });
@@ -256,45 +266,49 @@ class _ExamplePageState extends State<Memorias> {
       body: Column(
         children: [
           CalendarSlider(
-            controller: _firstController,
-            selectedDayPosition: SelectedDayPosition.center,
-            fullCalendarScroll: FullCalendarScroll.vertical,
-            backgroundColor: AppColors.primary,
-            fullCalendarWeekDay: WeekDay.short,
-            selectedTileBackgroundColor: Colors.white,
-            monthYearButtonBackgroundColor: Colors.white,
-            monthYearTextColor: Colors.black,
-            tileBackgroundColor: AppColors.secondary,
-            selectedDateColor: Colors.black,
-            dateColor: Colors.white,
-            tileShadow: BoxShadow(
-              color: Colors.black.withOpacity(1),
-            ),
-            locale: 'pt-br',
-            initialDate: DateTime.now(),
-            firstDate: DateTime.now().subtract(const Duration(days: 100)),
-            lastDate: DateTime.now().add(const Duration(days: 100)),
-            onDateSelected: (date) async {
-              setState(() {
-                dataSelecionada = date;
-                imgSelecionadas = _memoria[date]?['images'] ??
-                    []; // Carrega as imagens salvas
-              });
+              controller: _firstController,
+              selectedDayPosition: SelectedDayPosition.center,
+              fullCalendarScroll: FullCalendarScroll.vertical,
+              backgroundColor: AppColors.primary,
+              fullCalendarWeekDay: WeekDay.short,
+              selectedTileBackgroundColor: Colors.white,
+              monthYearButtonBackgroundColor: Colors.white,
+              monthYearTextColor: Colors.black,
+              tileBackgroundColor: AppColors.secondary,
+              selectedDateColor: Colors.black,
+              dateColor: Colors.white,
+              tileShadow: BoxShadow(
+                color: Colors.black.withOpacity(1),
+              ),
+              locale: 'pt-br',
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now().subtract(const Duration(days: 100)),
+              lastDate: DateTime.now().add(const Duration(days: 100)),
+              onDateSelected: (date) async {
+                setState(() {
+                  dataSelecionada = date;
+                  imgSelecionadas =
+                      _memoria[date]?['images'] ?? []; // Carrega imagens salvas
+                });
 
-              List<Map<String, dynamic>> memoria =
-                  await SQLHelper.getMemorias(user.id);
+                List<Map<String, dynamic>> memoria =
+                    await SQLHelper.getMemorias(user.id);
 
-              Map<String, dynamic>? memoriaDoDia = memoria.firstWhere(
-                (mem) => mem['data']
-                    .startsWith(date.toIso8601String().substring(0, 10)),
-                orElse: () => {},
-              );
+                Map<String, dynamic>? memoriaDoDia = memoria.firstWhere(
+                  (mem) => mem['data']
+                      .startsWith(date.toIso8601String().substring(0, 10)),
+                  orElse: () => {},
+                );
 
-              setState(() {
-                _memoria[dataSelecionada] = {'text': memoriaDoDia['mensagem']};
-              });
-            },
-          ),
+                setState(() {
+                  _memoria[dataSelecionada] = memoriaDoDia.isNotEmpty
+                      ? {
+                          'text': memoriaDoDia['mensagem'] ?? '',
+                          'id': memoriaDoDia['id'], // Adiciona o ID ao mapa
+                        }
+                      : {'text': null, 'id': null}; // Garante valores padrão
+                });
+              }),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
