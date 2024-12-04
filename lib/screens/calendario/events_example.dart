@@ -4,6 +4,8 @@ import 'package:calendario/styles/colors.dart';
 
 
 class TableEventsExample extends StatefulWidget {
+  const TableEventsExample({super.key});
+
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
 }

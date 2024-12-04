@@ -2,16 +2,26 @@
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:calendario/database/user.dart';
 
-
 class SQLHelper {
   static Future<void> criaTabela(sql.Database database) async {
     await database.execute("""
-        CREATE TABLE usuarios(
+          CREATE TABLE usuarios(
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            email TEXT NOT NULL,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL,
+            birthday TEXT NOT NULL
+          )
+        """);
+
+    // Criação da tabela 'memoria'
+    await database.execute("""
+        CREATE TABLE memoria(
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-          email TEXT NOT NULL,
-          username TEXT NOT NULL,
-          password TEXT NOT NULL,
-          birthday TEXT NOT NULL
+          id_usuario INTEGER NOT NULL,
+          mensagem TEXT NOT NULL,
+          data TEXT NOT NULL,
+          FOREIGN KEY (id_usuario) REFERENCES usuarios (id)
         )
       """);
   }
@@ -38,6 +48,7 @@ class SQLHelper {
     return await db.insert('usuarios', data);
   }
 
+  // Manipulaçção de Usuários
   Future<User?> getUser(String email, String password) async {
     final db = await SQLHelper.db();
     final result = await db.query(
@@ -121,9 +132,9 @@ class SQLHelper {
     );
   }
 
-   static Future<String?> getPasswordById(int id) async {
+  static Future<String?> getPasswordById(int id) async {
     final db = await SQLHelper.db();
-    
+
     // Realiza uma query no banco de dados para obter a senha do usuário pelo ID
     final result = await db.query(
       'usuarios', // Nome da tabela
@@ -141,6 +152,36 @@ class SQLHelper {
     return result.first['password'] as String?;
   }
 
+  // Manipulação de Memórias
+  static Future<int> addMemoria(
+      int idUsuario, String mensagem, String data) async {
+    final db = await SQLHelper.db();
+    final dataMap = {
+      'id_usuario': idUsuario,
+      'mensagem': mensagem,
+      'data': data
+    };
+    return await db.insert('memoria', dataMap);
+  }
 
 
+  static Future<void> updateMemoria(
+    int id, String mensagem, String data) async {
+    final db = await SQLHelper.db();
+    await db.update(
+      'memoria',
+      {'mensagem': mensagem, 'data': data},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getMemorias(int idUsuario) async {
+    final db = await SQLHelper.db();
+    return await db.query(
+      'memoria',
+      where: 'id_usuario = ?',
+      whereArgs: [idUsuario],
+    );
+  }
 }
