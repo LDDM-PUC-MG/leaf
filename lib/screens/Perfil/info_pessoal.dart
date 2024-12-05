@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:calendario/database/user_provider.dart';
 import 'package:calendario/screens/LoginCadastro/login.dart';
 
+import 'edit_password_screen.dart';
+
 class InfoPessoal extends StatelessWidget {
   const InfoPessoal({super.key});
 
@@ -14,7 +16,8 @@ class InfoPessoal extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Tem certeza?", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text("Tem certeza?",
+              style: TextStyle(fontWeight: FontWeight.bold)),
           content: Text("Esta ação não pode ser desfeita."),
           actions: [
             TextButton(
@@ -54,25 +57,64 @@ class InfoPessoal extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16),
-            _buildInfoCard(
-              context,
-              icon: Icons.person,
-              label: "Nome",
-              value: user.username,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+                );
+              },
+              child: _buildInfoCard(
+                context,
+                icon: Icons.person,
+                label: "Nome",
+                value: user.username,
+              ),
             ),
             SizedBox(height: 16),
-            _buildInfoCard(
-              context,
-              icon: Icons.email,
-              label: "Email",
-              value: user.email,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+                );
+              },
+              child: _buildInfoCard(
+                context,
+                icon: Icons.email,
+                label: "Email",
+                value: user.email,
+              ),
             ),
             SizedBox(height: 16),
-            _buildInfoCard(
-              context,
-              icon: Icons.cake,
-              label: "Data de Nascimento",
-              value: user.birthday,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+                );
+              },
+              child: _buildInfoCard(
+                context,
+                icon: Icons.cake,
+                label: "Data de Nascimento",
+                value: user.birthday,
+              ),
+            ),
+            SizedBox(height: 16),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+                );
+              },
+              child: _buildInfoCard(
+                context,
+                icon: Icons.password,
+                label: "Senha",
+                value: '•' * (user.password.length),
+              ),
             ),
             Spacer(),
             Center(
@@ -98,7 +140,8 @@ class InfoPessoal extends StatelessWidget {
   }
 
   // Função para criar cards com ícones e informações do usuário
-  Widget _buildInfoCard(BuildContext context, {required IconData icon, required String label, required String value}) {
+  Widget _buildInfoCard(BuildContext context,
+      {required IconData icon, required String label, required String value}) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -127,7 +170,10 @@ class InfoPessoal extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 value,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87),
               ),
             ],
           ),

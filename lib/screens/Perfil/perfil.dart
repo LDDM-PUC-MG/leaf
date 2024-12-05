@@ -1,10 +1,6 @@
 import 'dart:io'; // Para usar File
-import 'package:calendario/screens/Perfil/edit_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:calendario/styles/colors.dart';
-import 'package:calendario/screens/Perfil/edit_username_screen.dart';
-import 'package:calendario/screens/Perfil/edit_email_screen.dart';
-import 'package:calendario/screens/Perfil/edit_birthday_screen.dart';
 import 'package:image_picker/image_picker.dart'; // Para usar ImagePicker e ImageSource
 import 'package:provider/provider.dart';
 import 'package:calendario/database/user_provider.dart';
@@ -41,6 +37,7 @@ class _ProfileScreenState extends State<PerfilUsuario> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Perfil',
           style: TextStyle(color: AppColors.terciary, fontSize:24, fontWeight: FontWeight.bold),
@@ -125,51 +122,6 @@ class _ProfileScreenState extends State<PerfilUsuario> {
               Expanded(
                 child: ListView(
                   children: [
-                    ProfileOption(
-                      icon: Icons.person,
-                      label: 'Nome de Usuário',
-                      value: user.username,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => EditUsernameScreen()),
-                        );
-                      },
-                    ),
-                    ProfileOption(
-                      icon: Icons.email,
-                      label: 'E-mail',
-                      value: user.email,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => EditEmailScreen()),
-                        );
-                      },
-                    ),
-                      ProfileOption(
-                      icon: Icons.password,
-                      label: 'Senha',
-                      value: '•' * (user.password.length), // Mostra a senha como pontinhos
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => EditPasswordScreen()),
-                        );
-                      },
-                    ),
-                    ProfileOption(
-                      icon: Icons.cake,
-                      label: 'Data de Nascimento',
-                      value: user.birthday,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => EditBirthdayScreen()),
-                        );
-                      },
-                    ),
-                    Divider(),
                     ProfileOption(icon: Icons.info, label: 'Informações pessoais',
                     onPressed: () {
                         Navigator.push(
@@ -177,8 +129,6 @@ class _ProfileScreenState extends State<PerfilUsuario> {
                           MaterialPageRoute(builder: (context) => InfoPessoal()),
                         );
                       },),
-                    ProfileOption(icon: Icons.favorite, label: 'Seus favoritos'),
-                    ProfileOption(icon: Icons.payment, label: 'Pagamento'),
                     ProfileOption(icon: Icons.logout, label: 'Sair', isLogout: true),
                   ],
                 ),
