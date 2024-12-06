@@ -24,6 +24,18 @@ class SQLHelper {
           FOREIGN KEY (id_usuario) REFERENCES usuarios (id)
         )
       """);
+
+    // Criação da nova tabela 'calendario'
+    await database.execute("""
+    CREATE TABLE calendario(
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      id_usuario INTEGER NOT NULL,
+      titulo TEXT NOT NULL,
+      data TEXT NOT NULL,
+      hora TEXT,
+      FOREIGN KEY (id_usuario) REFERENCES usuarios (id)
+    )
+  """);
   }
 
   static Future<sql.Database> db() async {
@@ -36,8 +48,8 @@ class SQLHelper {
     );
   }
 
-  static Future<int> addUser(
-      String email, String username, String password, String birthday) async {
+  static Future<int> addUser(String email, String username, String password,
+      String birthday) async {
     final db = await SQLHelper.db();
     final data = {
       'email': email,
@@ -153,8 +165,8 @@ class SQLHelper {
   }
 
   // Manipulação de Memórias
-  static Future<int> addMemoria(
-      int idUsuario, String mensagem, String data) async {
+  static Future<int> addMemoria(int idUsuario, String mensagem,
+      String data) async {
     final db = await SQLHelper.db();
     final dataMap = {
       'id_usuario': idUsuario,
@@ -164,8 +176,8 @@ class SQLHelper {
     return await db.insert('memoria', dataMap);
   }
 
-  static Future<void> updateMemoria(
-      int memoriaId, String mensagem, String data) async {
+  static Future<void> updateMemoria(int memoriaId, String mensagem,
+      String data) async {
     final db = await SQLHelper.db();
     await db.update(
       'memoria',
@@ -185,5 +197,55 @@ class SQLHelper {
     );
   }
 
-  
+// CALENDARIO
+
+// Adicionar evento ao calendário
+  static Future<int> addCalendarEvent(int idUsuario, String titulo, String data,
+      {String? hora}) async {
+    final db = await SQLHelper.db();
+    final event = {
+      'id_usuario': idUsuario,
+      'titulo': titulo,
+      'data': data,
+      'hora': hora,
+    };
+    return await db.insert('calendario', event);
+  }
+
+// Obter eventos por data
+  static Future<List<Map<String, dynamic>>> getEventsByDate(int idUsuario,
+      String data) async {
+    final db = await SQLHelper.db();
+    return await db.query(
+      'calendario',
+      where: 'id_usuario = ? AND data = ?',
+      whereArgs: [idUsuario, data],
+    );
+  }
+
+// Obter todos os eventos de um usuário
+  static Future<List<Map<String, dynamic>>> getAllCalendarEvents(
+      int idUsuario) async {
+    final db = await SQLHelper.db();
+    return await db.query(
+      'calendario',
+      where: 'id_usuario = ?',
+      whereArgs: [idUsuario],
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getAllEvents(int idUsuario) async {
+    final db = await SQLHelper.db();
+    return await db.query('calendario_eventos', where: 'idUsuario = ?', whereArgs: [idUsuario]);
+  }
+
+// Remover um evento pelo ID
+  static Future<void> removeCalendarEvent(int id) async {
+    final db = await SQLHelper.db();
+    await db.delete(
+      'calendario',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
