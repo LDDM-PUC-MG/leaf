@@ -4,7 +4,6 @@ import 'package:calendario/database/user.dart';
 import 'package:calendario/database/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart'; // Import para pegar imagens
 import 'dart:io'; // Para manipular arquivos de imagem
 import 'package:calendario/styles/colors.dart';
 import 'package:calendario/screens/maps.dart';
@@ -265,59 +264,6 @@ class _ExamplePageState extends State<Memorias> {
     );
   }
 
-  Future<void> _escolherImgs() async {
-    final ImagePicker picker = ImagePicker();
-    final List<XFile> pickedFiles = await picker.pickMultiImage();
-
-    setState(() {
-      imgSelecionadas = pickedFiles.map((file) => File(file.path)).toList();
-    });
-  }
-
-  Widget _buildImageGallery() {
-    return Wrap(
-      alignment: WrapAlignment.center, // Centraliza as imagens
-      spacing: 20,
-      runSpacing: 10,
-      children: imgSelecionadas.map((image) {
-        return GestureDetector(
-          onTap: () {
-            _openFullScreenImage(image);
-          },
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.file(
-                image,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  void _openFullScreenImage(File image) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(); // Fecha a tela cheia ao clicar
-            },
-            child: Image.file(
-              image,
-              fit: BoxFit.contain,
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -489,10 +435,7 @@ class _ExamplePageState extends State<Memorias> {
                           style: const TextStyle(fontSize: 18),
                           textAlign: TextAlign.left,
                         ),
-                        const SizedBox(height: 10),
-                        _memoria[dataSelecionada]?['images'] != null
-                            ? _buildImageGallery()
-                            : Container(),
+                        
                       ],
                     ),
                   ),

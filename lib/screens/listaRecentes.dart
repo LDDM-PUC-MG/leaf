@@ -1,16 +1,17 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:calendario/database/sql_helper.dart';
 import 'package:calendario/database/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:calendario/styles/colors.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class ListaRecentes extends StatefulWidget {
   const ListaRecentes({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ListaRecentesState createState() => _ListaRecentesState();
 }
 
@@ -43,57 +44,59 @@ class _ListaRecentesState extends State<ListaRecentes> {
   }
 
   Future<void> _downloadMemorias() async {
-  final userProvider = Provider.of<UserProvider>(context, listen: false);
-  final user = userProvider.user;
-
-  if (user == null || _memorias.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Nenhuma memória para baixar!')),
-    );
-    return;
-  }
-
-  final buffer = StringBuffer();
-  buffer.writeln('Memórias do Usuário: ${user.username}');
-  for (var memoria in _memorias) {
-    buffer.writeln('ID: ${memoria['id']}');
-    buffer.writeln('Data: ${memoria['data']}');
-    buffer.writeln('Texto: ${memoria['mensagem']}');
-    buffer.writeln('-------------------');
-  }
-
-  try {
-    // Solicita permissão para acessar o armazenamento
-    final status = await Permission.storage.request();
-    if (status.isGranted) {
-      final directory = Directory('/storage/emulated/0/Download');
-      final filePath = '${directory.path}/memorias_${user.id}.txt';
-
-      // Salva o arquivo na pasta de downloads
-      final file = File(filePath);
-      await file.writeAsString(buffer.toString());
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Arquivo salvo em: $filePath')),
-      );
-    } else if (status.isDenied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permissão negada pelo usuário!')),
-      );
-    } else if (status.isPermanentlyDenied) {
+    if (_memorias.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text(
-                'Permissão permanentemente negada! Habilite-a nas configurações.')),
+            content: Text('Nenhuma memória disponível para download')),
       );
-      await openAppSettings(); // Abre as configurações do app
+      return;
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Erro ao salvar o arquivo!')),
-    );
+
+    try {
+      // Obtém o usuário logado
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final user = userProvider.user;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro: usuário não encontrado')),
+        );
+        return;
+      }
+
+      // Formata as memórias para texto legível
+      final StringBuffer content = StringBuffer();
+      content.writeln('Usuario: ${user.username}');
+      content.writeln('');
+      content.writeln('Memorias:');
+      content.writeln('');
+      for (var memoria in _memorias) {
+        content.writeln('     Memoria ${memoria['id']}');
+        content.writeln('     Data: ${memoria['data']}');
+        content.writeln('     Mensagem: ${memoria['mensagem']}');
+        content.writeln('-------------------------------------');
+      }
+
+      // Diretório para salvar o arquivo
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/memorias.txt';
+
+      // Salva o arquivo
+      final file = File(filePath);
+      await file.writeAsString(content.toString());
+
+      // Notifica o usuário e tenta abrir o arquivo
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Memórias salvas em: $filePath')),
+      );
+      await OpenFile.open(filePath);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao salvar as memórias')),
+      );
+    }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -128,10 +131,12 @@ class _ListaRecentesState extends State<ListaRecentes> {
                       icon: const Icon(Icons.download, size: 24),
                       label: const Text(
                         'Baixar todas as memórias',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
