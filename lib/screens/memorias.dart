@@ -11,8 +11,6 @@ import 'package:calendario/screens/maps.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-
-
 class Memorias extends StatefulWidget {
   const Memorias({super.key});
 
@@ -32,224 +30,219 @@ class _ExamplePageState extends State<Memorias> {
 
   // Função para exibir o diálogo para adicionar uma nova memória
 
-void _salvarMemoria(BuildContext context) {
-  TextEditingController noteController = TextEditingController(
-    text: _memoria[dataSelecionada]?['text'] ?? '',
-  );
-
-  stt.SpeechToText _speech = stt.SpeechToText();
-  bool _isListening = false;
-
-  void _startListening() async {
-    bool available = await _speech.initialize(
-      onStatus: (val) {
-        print('Status: $val');
-        if (val == "listening") {
-          setState(() {
-            _isListening = true;
-          });
-        } else if (val == "notListening") {
-          setState(() {
-            _isListening = false;
-          });
-        }
-      },
-      onError: (val) => print('Error: $val'),
+  void _salvarMemoria(BuildContext context) {
+    TextEditingController noteController = TextEditingController(
+      text: _memoria[dataSelecionada]?['text'] ?? '',
     );
 
-    if (available) {
-      _speech.listen(onResult: (val) {
-        noteController.text = val.recognizedWords; // Substituir ao invés de concatenar
-      });
-    } else {
-      print("Permissão para usar o microfone negada.");
+    stt.SpeechToText _speech = stt.SpeechToText();
+    bool _isListening = false;
+
+    void _startListening() async {
+      bool available = await _speech.initialize(
+        onStatus: (val) {
+          print('Status: $val');
+          if (val == "listening") {
+            setState(() {
+              _isListening = true;
+            });
+          } else if (val == "notListening") {
+            setState(() {
+              _isListening = false;
+            });
+          }
+        },
+        onError: (val) => print('Error: $val'),
+      );
+
+      if (available) {
+        _speech.listen(onResult: (val) {
+          noteController.text =
+              val.recognizedWords; // Substituir ao invés de concatenar
+        });
+      } else {
+        print("Permissão para usar o microfone negada.");
+      }
     }
-  }
 
-  void _stopListening() {
-    _speech.stop();
-    setState(() {
-      _isListening = false;
-    });
-  }
+    void _stopListening() {
+      _speech.stop();
+      setState(() {
+        _isListening = false;
+      });
+    }
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Center(child: Text("Memória do Dia")),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.place),
-                  onPressed: () async {
-                    // Código para seleção de localização
-                  },
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: noteController,
-                    decoration: const InputDecoration(
-                      hintText: "Digite aqui",
-                      border: OutlineInputBorder(),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text("Memória do Dia")),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.place),
+                    onPressed: () async {
+                      // Código para seleção de localização
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(
+                        hintText: "Digite aqui",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _isListening
-                  ? _stopListening
-                  : _startListening,
-              icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
-              label: Text(_isListening ? "Parar" : "Gravar"),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            child: const Text("Cancelar"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Salvar"),
-            onPressed: () async {
-              await SQLHelper.addMemoria(
-                user.id,
-                noteController.text,
-                dataSelecionada.toIso8601String().substring(0, 10),
-              );
-
-              setState(() {
-                _memoria[dataSelecionada] = {'text': noteController.text};
-              });
-
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
-
-void _editarMemoria(BuildContext context) {
-  final int? memoriaId = _memoria[dataSelecionada]?['id'];
-
-  if (memoriaId == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Nenhuma memória encontrada para este dia.")),
-    );
-    return;
-  }
-
-  TextEditingController noteController = TextEditingController(
-    text: _memoria[dataSelecionada]?['text'] ?? '',
-  );
-
-  stt.SpeechToText _speech = stt.SpeechToText();
-  bool _isListening = false;
-
-  void _startListening() async {
-    bool available = await _speech.initialize(
-      onStatus: (val) {
-        print('Status: $val');
-        if (val == "listening") {
-          setState(() {
-            _isListening = true;
-          });
-        } else if (val == "notListening") {
-          setState(() {
-            _isListening = false;
-          });
-        }
-      },
-      onError: (val) => print('Error: $val'),
-    );
-
-    if (available) {
-      _speech.listen(onResult: (val) {
-        noteController.text = val.recognizedWords;
-      });
-    } else {
-      print("Permissão para usar o microfone negada.");
-    }
-  }
-
-  void _stopListening() {
-    _speech.stop();
-    setState(() {
-      _isListening = false;
-    });
-  }
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Editar Memória"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: noteController,
-              decoration: const InputDecoration(
-                hintText: "Digite aqui",
-                border: OutlineInputBorder(),
+                ],
               ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _isListening ? _stopListening : _startListening,
+                icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
+                label: Text(_isListening ? "Parar" : "Gravar"),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _isListening
-                  ? _stopListening
-                  : _startListening,
-              icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
-              label: Text(_isListening ? "Parar" : "Gravar"),
+            ElevatedButton(
+              child: const Text("Salvar"),
+              onPressed: () async {
+                await SQLHelper.addMemoria(
+                  user.id,
+                  noteController.text,
+                  dataSelecionada.toIso8601String().substring(0, 10),
+                );
+
+                setState(() {
+                  _memoria[dataSelecionada] = {'text': noteController.text};
+                });
+
+                Navigator.of(context).pop();
+              },
             ),
           ],
-        ),
-        actions: [
-          ElevatedButton(
-            child: const Text("Cancelar"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Fecha o diálogo sem salvar
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Salvar"),
-            onPressed: () async {
-              // Atualiza a memória no SQLite
-              await SQLHelper.updateMemoria(
-                memoriaId, // Use o ID da memória
-                noteController.text,
-                dataSelecionada.toIso8601String().substring(0, 10),
-              );
+        );
+      },
+    );
+  }
 
-              // Atualiza o estado local
-              setState(() {
-                _memoria[dataSelecionada] = {'text': noteController.text};
-              });
+  void _editarMemoria(BuildContext context) {
+    final int? memoriaId = _memoria[dataSelecionada]?['id'];
 
-              Navigator.of(context).pop(); // Fecha o diálogo ao salvar
-            },
-          ),
-        ],
+    if (memoriaId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Nenhuma memória encontrada para este dia.")),
       );
-    },
-  );
-}
+      return;
+    }
 
+    TextEditingController noteController = TextEditingController(
+      text: _memoria[dataSelecionada]?['text'] ?? '',
+    );
 
+    stt.SpeechToText _speech = stt.SpeechToText();
+    bool _isListening = false;
 
+    void _startListening() async {
+      bool available = await _speech.initialize(
+        onStatus: (val) {
+          print('Status: $val');
+          if (val == "listening") {
+            setState(() {
+              _isListening = true;
+            });
+          } else if (val == "notListening") {
+            setState(() {
+              _isListening = false;
+            });
+          }
+        },
+        onError: (val) => print('Error: $val'),
+      );
+
+      if (available) {
+        _speech.listen(onResult: (val) {
+          noteController.text = val.recognizedWords;
+        });
+      } else {
+        print("Permissão para usar o microfone negada.");
+      }
+    }
+
+    void _stopListening() {
+      _speech.stop();
+      setState(() {
+        _isListening = false;
+      });
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Editar Memória"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: noteController,
+                decoration: const InputDecoration(
+                  hintText: "Digite aqui",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _isListening ? _stopListening : _startListening,
+                icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
+                label: Text(_isListening ? "Parar" : "Gravar"),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo sem salvar
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Salvar"),
+              onPressed: () async {
+                // Atualiza a memória no SQLite
+                await SQLHelper.updateMemoria(
+                  memoriaId, // Use o ID da memória
+                  noteController.text,
+                  dataSelecionada.toIso8601String().substring(0, 10),
+                );
+
+                // Atualiza o estado local
+                setState(() {
+                  _memoria[dataSelecionada] = {
+                    'id': memoriaId,
+                    'text': noteController.text,
+                  };
+                });
+
+                Navigator.of(context).pop(); // Fecha o diálogo ao salvar
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _msgPerdeuDia(BuildContext context) {
     showDialog(
