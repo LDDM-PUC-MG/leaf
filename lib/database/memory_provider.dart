@@ -42,6 +42,9 @@ class MemoryProvider with ChangeNotifier {
     }
   }
 
+  
+
+
 
 
   /// Obtém uma memória específica pelo ID
