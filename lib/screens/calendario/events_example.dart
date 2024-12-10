@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:calendario/styles/colors.dart';
-import 'package:calendario/database/sql_helper.dart'; // Certifique-se de importar o SQLHelper para a interação com o banco de dados.
+
 
 class TableEventsExample extends StatefulWidget {
   const TableEventsExample({super.key});
@@ -19,17 +19,12 @@ class _TableEventsExampleState extends State<TableEventsExample> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
 
-  Map<DateTime, List<Event>> _events = {}; // Local map to store events temporarily.
-
-  final int idUsuario = 1; // Supondo que o id do usuário seja 1. Ajuste conforme necessário.
-
   @override
   void initState() {
     super.initState();
+
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-
-    _loadAllEvents(); // Load all events from the database on init.
   }
 
   @override
@@ -38,25 +33,8 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     super.dispose();
   }
 
-  Future<void> _loadAllEvents() async {
-    _events.clear();
-    final allEvents = await SQLHelper.getAllEvents(idUsuario); // Passa o idUsuario como argumento.
-    for (var event in allEvents) {
-      DateTime eventDate = DateTime.parse(event['data']);
-      if (_events[eventDate] != null) {
-        _events[eventDate]!.add(Event(event['titulo'], event['id']));
-      } else {
-        _events[eventDate] = [Event(event['titulo'], event['id'])];
-      }
-    }
-
-    setState(() {
-      _selectedEvents.value = _getEventsForDay(_selectedDay!);
-    });
-  }
-
   List<Event> _getEventsForDay(DateTime day) {
-    return _events[day] ?? [];
+    return kEvents[day] ?? [];
   }
 
   List<Event> _getEventsForRange(DateTime start, DateTime end) {
@@ -102,55 +80,53 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Adicionar Evento"),
+        title: Text("Adicionar Evento"),
         content: TextField(
           controller: eventController,
-          decoration: const InputDecoration(hintText: "Título do evento"),
+          decoration: InputDecoration(hintText: "Título do evento"),
         ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text("Cancelar"),
+            child: Text("Cancelar"),
           ),
           TextButton(
-            onPressed: () async {
-              if (eventController.text.isNotEmpty && _selectedDay != null) {
-                final data =
-                    '${_selectedDay!.year}-${_selectedDay!.month.toString().padLeft(2, '0')}-${_selectedDay!.day.toString().padLeft(2, '0')}';
-
-                // Adicionar evento ao banco de dados SQLite
-                await SQLHelper.addCalendarEvent(
-                  idUsuario, // Passando o id do usuário autenticado.
-                  eventController.text,
-                  data,
-                );
-
-                await _loadAllEvents(); // Recarrega todos os eventos no calendário.
-                _selectedEvents.value = _getEventsForDay(_selectedDay!);
-                Navigator.pop(context); // Fecha o diálogo
+            onPressed: () {
+              if (eventController.text.isNotEmpty) {
+                setState(() {
+                  if (kEvents[_selectedDay!] != null) {
+                    kEvents[_selectedDay!]!.add(Event(eventController.text));
+                  } else {
+                    kEvents[_selectedDay!] = [Event(eventController.text)];
+                  }
+                  _selectedEvents.value = _getEventsForDay(_selectedDay!);
+                });
+                Navigator.pop(context);
               }
             },
-            child: const Text("Adicionar"),
+            child: Text("Adicionar"),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _removeEvent(int eventId) async {
-    // Remove evento do banco de dados pelo ID.
-    await SQLHelper.removeCalendarEvent(eventId);
-    await _loadAllEvents(); // Recarrega os eventos do banco de dados.
-    _selectedEvents.value = _getEventsForDay(_selectedDay!);
+  void _removeEvent() {
+    if (_selectedDay != null && kEvents[_selectedDay!] != null && kEvents[_selectedDay!]!.isNotEmpty) {
+      setState(() {
+        kEvents[_selectedDay!]!.removeLast();
+        _selectedEvents.value = _getEventsForDay(_selectedDay!);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendário'),
+        title: Text('Calendário'),
       ),
       body: Column(
         children: [
@@ -165,7 +141,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
             rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: const CalendarStyle(
+            calendarStyle: CalendarStyle(
               outsideDaysVisible: false,
             ),
             onDaySelected: _onDaySelected,
@@ -200,13 +176,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
                       ),
                       child: ListTile(
                         onTap: () => print('${value[index]}'),
-                        title: Text(value[index].title),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async {
-                            await _removeEvent(value[index].id!); // Remove evento pelo ID.
-                          },
-                        ),
+                        title: Text('${value[index]}'),
                       ),
                     );
                   },
@@ -219,33 +189,42 @@ class _TableEventsExampleState extends State<TableEventsExample> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _selectedDay != null
           ? Padding(
-        padding: const EdgeInsets.only(bottom: 15.0),
+        padding: const EdgeInsets.only(bottom: 15.0), // Aumenta a margem inferior
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FloatingActionButton.extended(
-              onPressed: _addEventDialog,
-              label: const Text(
-                "Adicionar Evento",
-                style: TextStyle(color: AppColors.white),
+              onPressed: _removeEvent,
+              label: Text(
+                "Remover Evento",
+                style: TextStyle(color: AppColors.white), // Define a cor da fonte
               ),
-              icon: const Icon(Icons.add, color: AppColors.white),
+              icon: Icon(Icons.remove, color:AppColors.white),
+              backgroundColor: Colors.red,
+            ),
+
+            FloatingActionButton.extended(
+              onPressed: _addEventDialog,
+              label: Text(
+                "Adicionar Evento",
+                style: TextStyle(color: AppColors.white), // Define a cor da fonte
+              ),
+              icon: Icon(Icons.add, color:AppColors.white),
               backgroundColor: AppColors.secondary,
             ),
           ],
         ),
       )
+
           : null,
     );
   }
 }
 
-// Event class with ID support for database.
+// Example events data
 class Event {
   final String title;
-  final int? id; // Add an ID to track events from the database.
-
-  Event(this.title, [this.id]);
+  Event(this.title);
 
   @override
   String toString() => title;
@@ -253,6 +232,8 @@ class Event {
 
 final kFirstDay = DateTime(2020, 1, 1);
 final kLastDay = DateTime(2030, 12, 31);
+
+final Map<DateTime, List<Event>> kEvents = {};
 
 // Helper functions
 List<DateTime> daysInRange(DateTime start, DateTime end) {
