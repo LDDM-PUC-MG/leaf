@@ -84,7 +84,10 @@ class _ExamplePageState extends State<Memorias> {
                   IconButton(
                     icon: const Icon(Icons.place),
                     onPressed: () async {
-                      // Código para seleção de localização
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapaSelecionarLocalizacao()),
+                      );
                     },
                   ),
                   const SizedBox(width: 8),
