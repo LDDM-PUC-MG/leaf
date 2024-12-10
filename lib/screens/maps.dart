@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 class MapaSelecionarLocalizacao extends StatefulWidget {
-  const MapaSelecionarLocalizacao({super.key});
-
-
-
   @override
-  // ignore: library_private_types_in_public_api
   _MapaSelecionarLocalizacaoState createState() => _MapaSelecionarLocalizacaoState();
 }
-
 class _MapaSelecionarLocalizacaoState extends State<MapaSelecionarLocalizacao> {
   late GoogleMapController mapController;
   LatLng? selectedLocation; // Para armazenar a localização selecionada
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
