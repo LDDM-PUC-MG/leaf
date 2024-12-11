@@ -164,7 +164,7 @@ class SQLHelper {
     return result.first['password'] as String?;
   }
 
-  // Manipulação de Memórias
+  //------------------Manipulação de Memórias------------------
   static Future<int> addMemoria(int idUsuario, String mensagem,
       String data) async {
     final db = await SQLHelper.db();

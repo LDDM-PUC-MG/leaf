@@ -84,16 +84,30 @@ class _ExamplePageState extends State<Memorias> {
                   IconButton(
                     icon: const Icon(Icons.place),
                     onPressed: () async {
-                      Navigator.push(
+                      // Navega para o mapa e obtém a localização selecionada
+                      LatLng? location = await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MapaSelecionarLocalizacao()),
+                        MaterialPageRoute(
+                          builder: (context) => MapaSelecionarLocalizacao(),
+                        ),
                       );
+
+                      if (location != null) {
+                        // Converte a localização em texto e adiciona ao campo de texto
+                        String locationText =
+                            'Lat: ${location.latitude}, Lng: ${location.longitude}';
+                        noteController.text =
+                            locationText; // Atualiza o texto no campo
+                      }
                     },
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: noteController,
+                      maxLines:
+                          null, // Permite que o campo de texto expanda verticalmente
+                      keyboardType: TextInputType.multiline,
                       decoration: const InputDecoration(
                         hintText: "Digite aqui",
                         border: OutlineInputBorder(),
@@ -111,27 +125,46 @@ class _ExamplePageState extends State<Memorias> {
             ],
           ),
           actions: [
-            ElevatedButton(
-              child: const Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Salvar"),
-              onPressed: () async {
-                await SQLHelper.addMemoria(
-                  user.id,
-                  noteController.text,
-                  dataSelecionada.toIso8601String().substring(0, 10),
-                );
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16), // Ajusta a altura
+                    ),
+                    child: const Text("Cancelar"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8), // Espaço entre os botões
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16), // Ajusta a altura
+                    ),
+                    child: const Text("Salvar"),
+                    onPressed: () async {
+                      await SQLHelper.addMemoria(
+                        user.id,
+                        noteController.text,
+                        dataSelecionada.toIso8601String().substring(0, 10),
+                      );
 
-                setState(() {
-                  _memoria[dataSelecionada] = {'text': noteController.text};
-                });
+                      setState(() {
+                        _memoria[dataSelecionada] = {
+                          'text': noteController.text
+                        };
+                      });
 
-                Navigator.of(context).pop();
-              },
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -197,12 +230,42 @@ class _ExamplePageState extends State<Memorias> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: noteController,
-                decoration: const InputDecoration(
-                  hintText: "Digite aqui",
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.place),
+                    onPressed: () async {
+                      // Navega para o mapa e obtém a localização selecionada
+                      LatLng? location = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapaSelecionarLocalizacao(),
+                        ),
+                      );
+
+                      if (location != null) {
+                        // Converte a localização em texto e adiciona ao campo de texto
+                        String locationText =
+                            'Lat: ${location.latitude}, Lng: ${location.longitude}';
+                        noteController.text =
+                            locationText; // Atualiza o texto no campo
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: noteController,
+                      maxLines:
+                          null, // Permite que o campo de texto expanda verticalmente
+                      keyboardType: TextInputType.multiline,
+                      decoration: const InputDecoration(
+                        hintText: "Digite aqui",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
@@ -213,32 +276,49 @@ class _ExamplePageState extends State<Memorias> {
             ],
           ),
           actions: [
-            ElevatedButton(
-              child: const Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo sem salvar
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Salvar"),
-              onPressed: () async {
-                // Atualiza a memória no SQLite
-                await SQLHelper.updateMemoria(
-                  memoriaId, // Use o ID da memória
-                  noteController.text,
-                  dataSelecionada.toIso8601String().substring(0, 10),
-                );
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16), // Ajusta a altura
+                    ),
+                    child: const Text("Cancelar"),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Fecha o diálogo sem salvar
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8), // Espaço entre os botões
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16), // Ajusta a altura
+                    ),
+                    child: const Text("Salvar"),
+                    onPressed: () async {
+                      // Atualiza a memória no SQLite
+                      await SQLHelper.updateMemoria(
+                        memoriaId, // Use o ID da memória
+                        noteController.text,
+                        dataSelecionada.toIso8601String().substring(0, 10),
+                      );
 
-                // Atualiza o estado local
-                setState(() {
-                  _memoria[dataSelecionada] = {
-                    'id': memoriaId,
-                    'text': noteController.text,
-                  };
-                });
+                      // Atualiza o estado local
+                      setState(() {
+                        _memoria[dataSelecionada] = {
+                          'id': memoriaId,
+                          'text': noteController.text,
+                        };
+                      });
 
-                Navigator.of(context).pop(); // Fecha o diálogo ao salvar
-              },
+                      Navigator.of(context).pop(); // Fecha o diálogo ao salvar
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -266,7 +346,6 @@ class _ExamplePageState extends State<Memorias> {
       },
     );
   }
-
 
   @override
   void initState() {
@@ -438,7 +517,6 @@ class _ExamplePageState extends State<Memorias> {
                           style: const TextStyle(fontSize: 18),
                           textAlign: TextAlign.left,
                         ),
-                        
                       ],
                     ),
                   ),
