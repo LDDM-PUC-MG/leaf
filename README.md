@@ -39,7 +39,7 @@ Agenda local do aplicativo: é possível salvar eventos e lembretes futuros.
   - usuarios
   - memoria
  
-  ![Tabelas](image.png)
+  ![Tabelas](imagem.png)
 
 ### API :world_map:
 Em relação a recursos externos, utilizamos a API do Google Maps para encontrar a localização do usuário e permitir que ela seja salva nas memórias.
